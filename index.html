@@ -5,105 +5,37 @@
 <title>Price Tracker</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-body {
-    margin: 0; padding: 0;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    background-color: #F5F4F4;
-    color: #222;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-height: 100vh;
-    padding-top: 20px;
-}
-h1 {
-    font-size: 28px; font-weight: 700; color: #cc163f; text-align: center; margin-bottom: 20px;
-}
-.form-container {
-    width: 90%; max-width: 500px; display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;
-}
-input[type="text"] {
-    padding: 14px 16px; font-size: 16px; border: 2px solid #ccc; border-radius: 12px; outline: none;
-}
-input[type="text"]:focus { border-color: #cc163f; }
-button.add-btn {
-    padding: 16px; font-size: 18px; font-weight: 600; border: none; border-radius: 14px;
-    background-color: #cc163f; color: #fff; cursor: pointer; transition: background-color 0.2s, transform 0.1s;
-}
-button.add-btn:hover { background-color: #a01533; transform: translateY(-2px); }
-button.add-btn:active { transform: translateY(1px); }
-
-.product-list {
-    width: 90%; max-width: 500px; display: flex; flex-direction: column; gap: 12px;
-}
-.product-item {
-    display: flex; justify-content: space-between; align-items: center; background-color: #fff;
-    padding: 12px 16px; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.08); font-size: 16px;
-}
-.product-item span.url { flex: 1; margin-right: 10px; overflow-x: hidden; text-overflow: ellipsis; white-space: nowrap; }
-button.delete-btn {
-    background-color: #888; color: #fff; border: none; border-radius: 10px; padding: 6px 12px; cursor: pointer;
-}
-button.delete-btn:hover { background-color: #555; }
-.alert { font-size: 16px; color: #222; margin-bottom: 20px; text-align: center; }
+body { font-family: Arial, sans-serif; background: #F5F4F4; margin: 0; padding: 20px; }
+h1 { color: #cc163f; text-align: center; }
+input { width: 100%; padding: 12px; font-size: 16px; margin-bottom: 10px; border-radius: 10px; border: 2px solid #ccc; }
+button { padding: 12px; font-size: 16px; background: #cc163f; color: white; border: none; border-radius: 10px; cursor: pointer; }
+button:hover { background: #a01533; }
+.alert { text-align: center; margin-top: 10px; color: #222; }
 </style>
 </head>
 <body>
 
 <h1>📉 Отслеживание цены</h1>
-
-<div class="form-container">
-    <input id="url" type="text" placeholder="Вставьте ссылку на товар">
-    <button id="addBtn" class="add-btn">Добавить товар</button>
-</div>
-
+<input id="url" placeholder="Вставьте ссылку на товар">
+<button id="addBtn">Добавить товар</button>
 <div class="alert" id="alert"></div>
-
-<div class="product-list" id="productList"></div>
 
 <script>
 const tg = window.Telegram.WebApp;
 tg.expand();
+console.log("Mini App запущен");
 
 const input = document.getElementById("url");
 const addBtn = document.getElementById("addBtn");
 const alertBox = document.getElementById("alert");
-const productList = document.getElementById("productList");
 
-// Список товаров в Mini App (локально для отображения)
-let products = [];
-
-// Функция обновления списка товаров в Mini App
-function renderProducts() {
-    productList.innerHTML = "";
-    products.forEach((p, index) => {
-        const div = document.createElement("div");
-        div.className = "product-item";
-        div.innerHTML = `<span class="url">${p}</span>
-                         <button class="delete-btn" data-index="${index}">Удалить</button>`;
-        productList.appendChild(div);
-    });
-
-    document.querySelectorAll(".delete-btn").forEach(btn => {
-        btn.addEventListener("click", () => {
-            const i = btn.getAttribute("data-index");
-            const removed = products.splice(i, 1)[0];
-            renderProducts();
-            tg.sendData("DELETE:" + removed);
-        });
-    });
-}
-
-// Добавление товара
 addBtn.addEventListener("click", () => {
     const url = input.value.trim();
-    if(!url) { alertBox.textContent = "⚠ Вставьте ссылку!"; return; }
-    products.push(url);
-    renderProducts();
+    if(!url){ alertBox.textContent = "⚠ Вставьте ссылку!"; return; }
+    console.log("Отправляем данные боту:", url);
     tg.sendData(url);
     alertBox.textContent = "✅ Товар отправлен боту!";
     input.value = "";
-    setTimeout(() => alertBox.textContent = "", 3000);
 });
 </script>
 

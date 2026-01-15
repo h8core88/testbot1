@@ -9,6 +9,7 @@ body { font-family: Arial; padding: 20px; background: #F5F4F4; }
 input { width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 10px; }
 button { width: 100%; padding: 12px; background: #cc163f; color: white; border: none; border-radius: 10px; cursor: pointer; }
 button:hover { background: #a01533; }
+#alert { margin-top: 10px; }
 </style>
 </head>
 <body>
@@ -25,15 +26,23 @@ const input = document.getElementById("url");
 const addBtn = document.getElementById("addBtn");
 const alertBox = document.getElementById("alert");
 
-addBtn.addEventListener("click", () => {
+addBtn.addEventListener("click", async () => {
     const url = input.value.trim();
     if(!url){ alertBox.textContent = "⚠ Вставьте ссылку!"; return; }
 
-    console.log("Отправляем данные боту:", url);
-    tg.sendData(url); // отправка данных боту
-
-    alertBox.textContent = "✅ Ссылка отправлена!";
-    input.value = "";
+    try {
+        const res = await fetch("https://<твой_сервер>:8000/add", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({url: url, chat_id: tg.initDataUnsafe.user.id})
+        });
+        const data = await res.json();
+        if(data.status === "ok") alertBox.textContent = "✅ Ссылка отправлена!";
+        else alertBox.textContent = "⚠ Ошибка сервера";
+    } catch(e) {
+        console.error(e);
+        alertBox.textContent = "⚠ Не удалось отправить данные";
+    }
 });
 </script>
 

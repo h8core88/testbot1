@@ -15,7 +15,7 @@ button:hover { background: #a01533; }
 </head>
 <body>
 
-<h1>📉 Отслеживание цены1</h1>
+<h1>📉 Отслеживание цены</h1>
 <input id="url" placeholder="Вставьте ссылку на товар">
 <button id="addBtn">Добавить товар</button>
 <div class="alert" id="alert"></div>
@@ -33,7 +33,7 @@ addBtn.addEventListener("click", () => {
     const url = input.value.trim();
     if(!url){ alertBox.textContent = "⚠ Вставьте ссылку!"; return; }
     console.log("Отправляем данные боту:", url);
-    tg.sendData(url);
+    tg.sendData(url); // отправка данных боту
     alertBox.textContent = "✅ Товар отправлен боту!";
     input.value = "";
 });
@@ -41,4 +41,3 @@ addBtn.addEventListener("click", () => {
 
 </body>
 </html>
-
